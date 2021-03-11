@@ -74,7 +74,7 @@ def write_usage_stats():
             writer.writerow(csv_row_data
 
 
-if "__name__" == "__main__":
+if __name__ == "__main__":
     search_errors_info()
     combine_data()
     write_usage_stats()
