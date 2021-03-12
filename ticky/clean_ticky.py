@@ -71,7 +71,7 @@ def write_usage_stats():
         for key, value in usage_stats.items():
             info, error = value
             csv_row_data = {"USER": key, "INFO": info, "ERROR": error}
-            writer.writerow(csv_row_data
+            writer.writerow(csv_row_data)
 
 
 if __name__ == "__main__":
