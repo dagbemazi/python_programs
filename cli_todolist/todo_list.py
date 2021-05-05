@@ -1,5 +1,4 @@
 import click
-import os
 import sqlite3
 
 # TODO: No pun intended,
@@ -65,6 +64,7 @@ def show():
 	print('Date | Task')
 	for task_value in data:
 		date, task, deadline = task_value
+		# TODO: Print show() command results neatly.
 		print(task)
 		
 
@@ -82,10 +82,13 @@ def delete(task):
 		cursor = connect.cursor()
 		cursor.execute(del_query, [task])
 		connect.commit()
+	
+	# TODO: Delete works for single words, modify program to accept full sentence
 
 
 @cli.command()
 def edit():
+	# TODO: Allow editing of a specific task to to typo error etc
 	pass
 
 
