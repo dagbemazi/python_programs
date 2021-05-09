@@ -1,35 +1,20 @@
 import click
 import sqlite3
 
-# TODO: No pun intended,
-# IMPORTANT: Create a db connection 
-# 1. Prompt user for chore/task and store task so it persists.
-#    Using sqlite as data store seems okay. I need to build the api for that
-
-# 2. User should enter infinite task until last prompt is blank
-# 3. Do not store blank prompt, skip
-# 4. Display all tasks with the 'show' subcommand
-# 5. Delete completed tasks from storage, indicating completion 
-# 6. Edit a task entry CRUD Applications
-
-
-
-# DB Connections
-
-conn = sqlite3.connect("todo_list.db")
-cursor = conn.cursor()
-sqlite_query = """CREATE TABLE IF NOT EXISTS todo_list 
-                  (date_added DATETIME DEFAULT CURRENT_TIMESTAMP, task TEXT NOT NULL, deadline TEXT)"""
-cursor.execute(sqlite_query)
-cursor.close()
-
-
-
 
 @click.group()
 def cli():
 	"""A simple CLI Todo List, never worry about forgetting your tasks"""
-	click.echo("Got tasks today? List 'em\n")
+
+	# Create DB
+	conn = sqlite3.connect("todo_list.db")
+	cursor = conn.cursor()
+	sqlite_query = """CREATE TABLE IF NOT EXISTS todo_list 
+					(date_added DATETIME DEFAULT CURRENT_TIMESTAMP, task TEXT NOT NULL, deadline TEXT)"""
+	cursor.execute(sqlite_query)
+	cursor.close()
+
+
 
 @cli.command()
 def add():
@@ -38,6 +23,9 @@ def add():
 	Stop adding by making the next entry empty
 	"""
 	insert_query  = "INSERT INTO todo_list(task) VALUES(?)"
+	
+	click.echo("Add tasks to your list.\n")
+
 	while True:
 		connect = sqlite3.connect("todo_list.db", timeout=100)
 		cursor = connect.cursor()
@@ -61,11 +49,13 @@ def show():
 	cursor.execute(show_query)
 	data = cursor.fetchall()
 
-	print('Date | Task')
+	print(f"Date|Task|Deadline")
 	for task_value in data:
 		date, task, deadline = task_value
-		# TODO: Print show() command results neatly.
-		print(task)
+		if deadline == None:
+			deadline = ""
+		new_date = date.split()[0]
+		click.echo(f"{new_date}|{task}|{deadline}")
 		
 
 
@@ -82,16 +72,25 @@ def delete(task):
 		cursor = connect.cursor()
 		cursor.execute(del_query, [task])
 		connect.commit()
+		click.echo("\nTask deleted.")
 	
-	# TODO: Delete works for single words, modify program to accept full sentence
-
 
 @cli.command()
-def edit():
-	# TODO: Allow editing of a specific task to to typo error etc
-	pass
+@click.argument("task", type=str)
+@click.argument("edit_task")
+def edit(task, edit_task):
+	"""
+	Edit a task in the list.
+	"""
+	edit_query = "UPDATE todo_list SET task = ? WHERE task = ?"
+	conn = sqlite3.connect("todo_list.db")
+	cursor = conn.cursor()
+	cursor.execute(edit_query, (edit_task, task))
+	conn.commit()
+	click.echo("Successfully updated!")
 
 
+# Add various commands to group
 cli.add_command(add)
 cli.add_command(show)
 cli.add_command(delete)
