@@ -2,8 +2,8 @@ from setuptools import setup
 
 
 setup(
-	name = "simple",
-	version = "0.0.01",
+	name = "todo_list",
+	version = "0.1",
 	install_requires = ["Click",],
 	py_modules = ["todo_list"],
 	entry_points = """
