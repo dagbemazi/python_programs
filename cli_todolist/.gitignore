@@ -1,3 +1,5 @@
 # Exclude database file
 
 *.db
+__pycachce__
+.egg-info
