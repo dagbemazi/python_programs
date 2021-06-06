@@ -1,6 +1,8 @@
 #! python
 
-import operator, csv, re
+import operator
+import csv
+import re
 
 errors = {}
 user_info_count = {}
@@ -14,7 +16,8 @@ def search_errors_info():
         for line in file:
             if ' ERROR: ' in line:
 
-                find_error = re.search(r"ticky: ERROR: ([\w ]*) .*\(([\w ]*)\)", line)
+                find_error = re.search(
+                    r"ticky: ERROR: ([\w ]*) .*\(([\w ]*)\)", line)
                 error_description = find_error.group(1)
 
                 if error_description not in errors:
@@ -35,9 +38,8 @@ def search_errors_info():
                 if res not in user_info_count:
                     user_info_count[res] = 1
                 else:
-                    user_info_count[res] += 1               
+                    user_info_count[res] += 1
     file.close()
-
 
 
 def combine_data():
@@ -45,11 +47,13 @@ def combine_data():
     list_of_dicts = [user_info_count, error_user]
 
     for user in user_info_count.keys():
-        usage_stats[user] = tuple(usage_stats[user] for usage_stats in list_of_dicts)
+        usage_stats[user] = tuple(usage_stats[user]
+                                  for usage_stats in list_of_dicts)
 
 
 def write_error_csv():
-    sorted_dict = dict(sorted(errors.items(), key=operator.itemgetter(1), reverse=True))
+    sorted_dict = dict(
+        sorted(errors.items(), key=operator.itemgetter(1), reverse=True))
 
     with open("errors.csv", 'w', newline="") as error:
         field_names = ["Errors", "Count"]
